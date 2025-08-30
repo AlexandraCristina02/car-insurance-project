@@ -70,4 +70,21 @@ class CarInsuranceApplicationTests {
     void getCarHistory_200OK() throws Exception{
         mockMvc.perform(get("/api/cars/1/history")).andExpect(status().isOk());
     }
+
+    @Test
+    void isInsuranceValid_carIdNotFound() throws Exception{
+        mockMvc.perform(get("/api/cars/56/insurance-valid?date=2025-03-23")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void isInsuranceValid_invalidDateFormat() throws Exception{
+        mockMvc.perform(get("/api/cars/1/insurance-valid?date=20-03-2025")).andExpect(status().isBadRequest())
+                .andExpect(content().string("Invalid date format. Expected format: YYYY-MM-DD"));
+    }
+
+    @Test
+    void isInsuranceValid_dateOutsideRange() throws Exception{
+        mockMvc.perform(get("/api/cars/1/insurance-valid?date=1800-03-23")).andExpect(status().isBadRequest())
+                .andExpect(content().string("Date outside supported range 1900-01-01 to 2100-12-31"));
+    }
 }

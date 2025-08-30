@@ -15,6 +15,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 
 @RestController
@@ -36,8 +37,22 @@ public class CarController {
 
     @GetMapping("/cars/{carId}/insurance-valid")
     public ResponseEntity<?> isInsuranceValid(@PathVariable Long carId, @RequestParam String date) {
-        // TODO: validate date format and handle errors consistently
-        LocalDate d = LocalDate.parse(date);
+        if (!service.carExists(carId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        LocalDate d ;
+        try{
+            d= LocalDate.parse(date);
+        }catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest()
+                    .body("Invalid date format. Expected format: YYYY-MM-DD");
+        }
+        LocalDate minDate = LocalDate.of(1900, 1, 1);
+        LocalDate maxDate = LocalDate.of(2100, 12, 31);
+        if(d.isBefore(minDate)||d.isAfter(maxDate)){
+            return ResponseEntity.badRequest()
+                    .body("Date outside supported range " + minDate + " to " + maxDate);
+        }
         boolean valid = service.isInsuranceValid(carId, d);
         return ResponseEntity.ok(new InsuranceValidityResponse(carId, d.toString(), valid));
     }
