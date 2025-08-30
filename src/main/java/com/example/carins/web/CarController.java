@@ -1,11 +1,18 @@
 package com.example.carins.web;
 
 import com.example.carins.model.Car;
+import com.example.carins.model.InsuranceClaim;
 import com.example.carins.service.CarService;
 import com.example.carins.web.dto.CarDto;
+import com.example.carins.web.dto.ClaimMapper;
+import com.example.carins.web.dto.ClaimRequestDto;
+import com.example.carins.web.dto.ClaimResponseDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.net.URI;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -14,9 +21,11 @@ import java.util.List;
 public class CarController {
 
     private final CarService service;
+    private final ClaimMapper claimMapper;
 
-    public CarController(CarService service) {
+    public CarController(CarService service, ClaimMapper claimMapper) {
         this.service = service;
+        this.claimMapper=claimMapper;
     }
 
     @GetMapping("/cars")
@@ -31,6 +40,20 @@ public class CarController {
         boolean valid = service.isInsuranceValid(carId, d);
         return ResponseEntity.ok(new InsuranceValidityResponse(carId, d.toString(), valid));
     }
+
+    @PostMapping("/cars/{carId}/claims")
+    public ResponseEntity<ClaimResponseDto> createInsuranceClaim(@PathVariable Long carId, @Valid @RequestBody ClaimRequestDto claimRequestDto){
+       InsuranceClaim newClaim= service.saveInsuranceClaim(carId,claimRequestDto);
+       ClaimResponseDto newClaimDto=claimMapper.toDto(newClaim);
+        URI location = ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(newClaimDto.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(newClaimDto);
+
+    }
+
 
     private CarDto toDto(Car c) {
         var o = c.getOwner();
