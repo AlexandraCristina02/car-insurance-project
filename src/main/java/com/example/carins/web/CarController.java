@@ -44,6 +44,9 @@ public class CarController {
 
     @PostMapping("/cars/{carId}/claims")
     public ResponseEntity<ClaimResponseDto> createInsuranceClaim(@PathVariable Long carId, @Valid @RequestBody ClaimRequestDto claimRequestDto) {
+        if (!service.carExists(carId)) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         InsuranceClaim newClaim = service.saveInsuranceClaim(carId, claimRequestDto);
         ClaimResponseDto newClaimDto = claimMapper.toDto(newClaim);
         URI location = ServletUriComponentsBuilder
