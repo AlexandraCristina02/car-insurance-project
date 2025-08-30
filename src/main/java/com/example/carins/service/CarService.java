@@ -46,6 +46,15 @@ public class CarService {
         return claimRepository.save(insuranceClaim);
     }
 
+    public List<InsuranceClaim> getInsuranceClaimsByCar(Long carId){
+        return claimRepository.findByCarIdOrderByClaimDateAsc(carId);
+    }
+
+    public boolean carExists(Long carId){
+        return carRepository.existsById(carId);
+    }
+
+
 
 
 }

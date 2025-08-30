@@ -11,6 +11,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -32,6 +33,8 @@ class CarInsuranceApplicationTests {
         assertFalse(service.isInsuranceValid(2L, LocalDate.parse("2025-02-01")));
     }
 
+
+
     @Test
     void createInsuranceClaim_success() throws Exception {
         mockMvc.perform(post("/api/cars/1/claims").content("""
@@ -49,12 +52,22 @@ class CarInsuranceApplicationTests {
 
     @Test
     void createInsuranceClaim_fail() throws Exception {
-        this.mockMvc.perform(post("/api/cars/1/claims").content("""
+        mockMvc.perform(post("/api/cars/1/claims").content("""
                 {
                     "claimDate": "2026-07-30",
                     "description": "Rear-end accident",
                     "amount": 1200.00
                 }
                 """).contentType(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void getCarHistory_404NotFound() throws Exception{
+      mockMvc.perform(get("/api/cars/185678/history")).andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getCarHistory_200OK() throws Exception{
+        mockMvc.perform(get("/api/cars/1/history")).andExpect(status().isOk());
     }
 }
