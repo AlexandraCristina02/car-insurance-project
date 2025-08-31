@@ -2,11 +2,9 @@ package com.example.carins.web;
 
 import com.example.carins.model.Car;
 import com.example.carins.model.InsuranceClaim;
+import com.example.carins.model.InsurancePolicy;
 import com.example.carins.service.CarService;
-import com.example.carins.web.dto.CarDto;
-import com.example.carins.web.dto.ClaimMapper;
-import com.example.carins.web.dto.ClaimRequestDto;
-import com.example.carins.web.dto.ClaimResponseDto;
+import com.example.carins.web.dto.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,10 +22,12 @@ public class CarController {
 
     private final CarService service;
     private final ClaimMapper claimMapper;
+    private final PolicyMapper policyMapper;
 
-    public CarController(CarService service, ClaimMapper claimMapper) {
+    public CarController(CarService service, ClaimMapper claimMapper, PolicyMapper policyMapper) {
         this.service = service;
         this.claimMapper = claimMapper;
+        this.policyMapper= policyMapper;
     }
 
     @GetMapping("/cars")
@@ -55,6 +55,13 @@ public class CarController {
         }
         boolean valid = service.isInsuranceValid(carId, d);
         return ResponseEntity.ok(new InsuranceValidityResponse(carId, d.toString(), valid));
+    }
+
+    @PostMapping("/policy")
+    public ResponseEntity<PolicyDto> createPolicy(@Valid @RequestBody PolicyDto policyDto) {
+        InsurancePolicy policy=service.createInsurancePolicy(policyDto);
+        PolicyDto resultedPolicy=policyMapper.toDto(policy);
+        return ResponseEntity.status(HttpStatus.CREATED).body(resultedPolicy);
     }
 
     @PostMapping("/cars/{carId}/claims")

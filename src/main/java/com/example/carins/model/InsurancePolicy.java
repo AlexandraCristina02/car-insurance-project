@@ -13,7 +13,9 @@ public class InsurancePolicy {
     private Car car;
 
     private String provider;
+    @Column(nullable = false)
     private LocalDate startDate;
+    @Column(nullable = false) //database level validation
     private LocalDate endDate; // nullable == open-ended
 
     public InsurancePolicy() {}
@@ -29,5 +31,5 @@ public class InsurancePolicy {
     public LocalDate getStartDate() { return startDate; }
     public void setStartDate(LocalDate startDate) { this.startDate = startDate; }
     public LocalDate getEndDate() { return endDate; }
-    public void setEndDate(LocalDate endDate) { this.endDate = endDate; }
+    public void setEndDate(LocalDate endDate) {this.endDate = endDate; }
 }
