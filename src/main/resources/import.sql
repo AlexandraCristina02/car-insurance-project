@@ -7,6 +7,9 @@ INSERT INTO car (id, vin, make, model, year_of_manufacture, owner_id) VALUES (2,
 INSERT INTO insurancepolicy ( car_id, provider, start_date, end_date) VALUES ( 1, 'Allianz', DATE '2024-01-01', DATE '2024-12-31');
 INSERT INTO insurancepolicy ( car_id, provider, start_date, end_date) VALUES ( 1, 'Groupama', DATE '2025-01-01', DATE '2026-01-01' );
 INSERT INTO insurancepolicy ( car_id, provider, start_date, end_date) VALUES ( 2, 'Allianz', DATE '2025-03-01', DATE '2025-09-30');
+INSERT INTO insurancepolicy ( car_id, provider, start_date, end_date) VALUES ( 2, 'Allianz', DATE '2025-03-01', DATE '2025-08-30');
+INSERT INTO insurancepolicy ( car_id, provider, start_date, end_date) VALUES ( 1, 'Allianz', DATE '2025-04-01', DATE '2025-08-30');
+
 
 INSERT INTO insuranceclaim ( car_id, claim_date, description, amount) VALUES ( 1, DATE '2024-02-15', 'Front bumper collision', 1200.00);
 INSERT INTO insuranceclaim ( car_id, claim_date, description, amount) VALUES ( 1, DATE '2025-07-20', 'Windshield replacement', 470.00);
