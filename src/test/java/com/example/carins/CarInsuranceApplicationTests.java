@@ -1,6 +1,7 @@
 package com.example.carins;
 
 import com.example.carins.service.CarService;
+import com.example.carins.service.ScheduledTaskPolicyDate;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -25,6 +26,8 @@ class CarInsuranceApplicationTests {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private ScheduledTaskPolicyDate task;
 
     @Test
     void insuranceValidityBasic() {
@@ -109,5 +112,10 @@ class CarInsuranceApplicationTests {
                     "startDate": "2025-01-01"
                 }
                 """).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void testLogExpiredPolicies() {
+        task.logExpiredPolicies();
     }
 }
