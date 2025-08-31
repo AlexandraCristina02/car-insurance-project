@@ -87,4 +87,27 @@ class CarInsuranceApplicationTests {
         mockMvc.perform(get("/api/cars/1/insurance-valid?date=1800-03-23")).andExpect(status().isBadRequest())
                 .andExpect(content().string("Date outside supported range 1900-01-01 to 2100-12-31"));
     }
+
+    @Test
+    void createPolicy_nullEndDate() throws Exception{
+        mockMvc.perform(post("/api/policy").content("""
+                {
+                    "carId": "1",
+                    "provider": "Allianz",
+                    "startDate": "2025-01-01",
+                    "endDate: ""
+                }
+                """).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    void createPolicy_withoutEndDate() throws Exception{
+        mockMvc.perform(post("/api/policy").content("""
+                {
+                    "carId": "1",
+                    "provider": "Allianz",
+                    "startDate": "2025-01-01"
+                }
+                """).contentType(MediaType.APPLICATION_JSON)).andExpect(status().is4xxClientError());
+    }
 }
